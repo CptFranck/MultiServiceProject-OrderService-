@@ -1,6 +1,5 @@
 package example.CptFranck.BookingService.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingEventBis {
+public class BookingEvent {
 
     private Long userId;
 
