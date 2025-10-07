@@ -16,15 +16,12 @@ spring:
   # Kafka
   kafka:
     bootstrap-servers: localhost:9092
-    template:
-      default-topic: booking
     consumer:
       group-id: order-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.use.type.headers: false
-        spring.json.value.default.type: example.CptFranck.BookingService.dto.BookingEvent
         spring.json.trusted.packages: '*'
 
 server:
