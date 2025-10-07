@@ -16,8 +16,6 @@ spring:
   # Kafka
   kafka:
     bootstrap-servers: localhost:9092
-    template:
-      default-topic: booking
     consumer:
       group-id: order-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
