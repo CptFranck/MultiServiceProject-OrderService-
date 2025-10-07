@@ -4,6 +4,8 @@ import com.CptFranck.OrderService.client.InventoryServiceClient;
 import com.CptFranck.OrderService.entity.OrderEntity;
 import com.CptFranck.OrderService.repository.OrderRepository;
 import example.CptFranck.BookingService.dto.BookingEvent;
+import example.CptFranck.InventoryService.dto.dto.BookingConfirmed;
+import example.CptFranck.InventoryService.dto.dto.BookingRejected;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -41,5 +43,26 @@ public class OrderService {
                 .ticketCount(bookingEvent.getTicketCount())
                 .totalPrice(bookingEvent.getTotalPrice())
                 .build();
+    }
+
+    @KafkaListener(topics = "booking-confirmed", groupId = "order-service")
+    public void handleBookingConfirmed(
+//            com.CptFranck.InventoryService.dto.BookingConfirmed
+            BookingConfirmed bookingConfirmed) {
+        OrderEntity order = OrderEntity.builder()
+                .customerId(bookingConfirmed.getUserId())
+                .eventId(bookingConfirmed.getEventId())
+                .ticketCount(bookingConfirmed.getTicketCount())
+                .totalPrice(bookingConfirmed.getTotalPrice())
+                .build();
+        orderRepository.save(order);
+        log.info("Order created: {}", order);
+    }
+
+    @KafkaListener(topics = "booking-rejected", groupId = "order-service")
+    public void handleBookingRejected(
+//            com.CptFranck.InventoryService.dto.BookingRejected
+              BookingRejected bookingRejected) {
+        log.warn("Booking rejected for user {}: {}", bookingRejected.getUserId(), bookingRejected.getReason());
     }
 }
