@@ -7,6 +7,7 @@ import example.CptFranck.BookingService.dto.BookingEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+//import com.CptFranck.BookingService.dto.BookingService;
 
 @Service
 @Slf4j
