@@ -3,11 +3,10 @@ package com.CptFranck.OrderService.service;
 import com.CptFranck.OrderService.client.InventoryServiceClient;
 import com.CptFranck.OrderService.entity.OrderEntity;
 import com.CptFranck.OrderService.repository.OrderRepository;
-import example.CptFranck.BookingService.dto.BookingEvent;
+import com.CptFranck.dto.BookingEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-//import com.CptFranck.BookingService.dto.BookingService;
 
 @Service
 @Slf4j
@@ -23,9 +22,7 @@ public class OrderService {
     }
 
     @KafkaListener(topics = "booking", groupId = "order-service")
-    public void orderEvent(
-//            com.CptFranck.BookingService.dto.BookingEvent
-              BookingEvent bookingEvent) {
+    public void orderEvent(BookingEvent bookingEvent) {
         log.info("Booking event received: " + bookingEvent);
 
         OrderEntity orderEntity = createOrder(bookingEvent);
