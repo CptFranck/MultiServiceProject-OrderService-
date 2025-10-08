@@ -1,9 +1,9 @@
 package com.CptFranck.OrderService.service;
 
-import com.CptFranck.OrderService.client.InventoryServiceClient;
 import com.CptFranck.OrderService.entity.OrderEntity;
 import com.CptFranck.OrderService.repository.OrderRepository;
-import com.CptFranck.dto.BookingEvent;
+import com.CptFranck.dto.BookingConfirmed;
+import com.CptFranck.dto.BookingRejected;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -14,30 +14,24 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    private final InventoryServiceClient inventoryServiceClient;
-
-    public OrderService(OrderRepository orderRepository, InventoryServiceClient inventoryServiceClient) {
+    public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.inventoryServiceClient = inventoryServiceClient;
     }
 
-    @KafkaListener(topics = "booking", groupId = "order-service")
-    public void orderEvent(BookingEvent bookingEvent) {
-        log.info("Booking event received: " + bookingEvent);
-
-        OrderEntity orderEntity = createOrder(bookingEvent);
-        orderRepository.save(orderEntity);
-
-        inventoryServiceClient.updateInventory(orderEntity.getEventId(), orderEntity.getTicketCount());
-        log.info("Inventory updated for event: {}, less tickets: {}", orderEntity.getEventId(), orderEntity.getTicketCount());
-    }
-
-    private OrderEntity createOrder(BookingEvent bookingEvent) {
-        return OrderEntity.builder()
-                .customerId(bookingEvent.getUserId())
-                .eventId(bookingEvent.getEventId())
-                .ticketCount(bookingEvent.getTicketCount())
-                .totalPrice(bookingEvent.getTotalPrice())
+    @KafkaListener(topics = "booking-confirmed", groupId = "order-service")
+    public void handleBookingConfirmed(BookingConfirmed event) {
+        OrderEntity order = OrderEntity.builder()
+                .customerId(event.getUserId())
+                .eventId(event.getEventId())
+                .ticketCount(event.getTicketCount())
+                .totalPrice(event.getTotalPrice())
                 .build();
+        orderRepository.save(order);
+        log.info("Order created: {}", order);
+    }
+
+    @KafkaListener(topics = "booking-rejected", groupId = "order-service")
+    public void handleBookingRejected(BookingRejected event) {
+        log.warn("Booking rejected for user {}: {}", event.getUserId(), event.getReason());
     }
 }
