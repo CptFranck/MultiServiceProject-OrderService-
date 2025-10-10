@@ -20,6 +20,8 @@ public class OrderService {
 
     @KafkaListener(topics = "booking-confirmed", groupId = "order-service")
     public void handleBookingConfirmed(BookingConfirmed event) {
+        log.info("Received booking confirmed: {}", event);
+
         OrderEntity order = OrderEntity.builder()
                 .customerId(event.getUserId())
                 .eventId(event.getEventId())
@@ -27,11 +29,14 @@ public class OrderService {
                 .totalPrice(event.getTotalPrice())
                 .build();
         orderRepository.save(order);
+
         log.info("Order created: {}", order);
     }
 
     @KafkaListener(topics = "booking-rejected", groupId = "order-service")
     public void handleBookingRejected(BookingRejected event) {
+        log.info("Received booking rejected: {}", event);
+
         log.warn("Booking rejected for user {}: {}", event.getUserId(), event.getReason());
     }
 }
