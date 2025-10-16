@@ -26,6 +26,8 @@ It exposes REST endpoints for creating and retrieving orders and consumes events
 
 The Order Service is part of a **5-repository microservice ecosystem**:
 
+![Architecture du projet](docs/schemaProject.png)
+
 1. **Common** – Shared DTOs and utilities used across services.  
 2. **Booking Service** – Handles booking operations and emits Kafka events.  
 3. **Inventory Service** – Manages venue and event stock, consumes booking and order events.  
